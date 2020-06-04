@@ -215,6 +215,12 @@
 #define WaveGetLaneCount ERROR_ON_UNSUPPORTED_FUNCTION(WaveGetLaneCount)
 #endif
 
+// For multi_compile
+#ifdef PLATFORM_LANE_COUNT_32
+#undef PLATFORM_LANE_COUNT
+#define PLATFORM_LANE_COUNT 32
+#endif
+
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonDeprecated.hlsl"
 
 #if !defined(SHADER_API_GLES)

@@ -409,6 +409,8 @@ namespace UnityEngine.Rendering.HighDefinition
                 return;
             }
 
+            DeviceInfo.ProbeDeviceInfo();
+
 #if ENABLE_VIRTUALTEXTURES
             VirtualTexturingSettingsSRP settings = asset.virtualTexturingSettings;
 
