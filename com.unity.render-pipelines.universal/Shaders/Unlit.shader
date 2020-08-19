@@ -49,7 +49,7 @@ Shader "Universal Render Pipeline/Unlit"
             // Unity defined keywords
             #pragma multi_compile_fog
             #pragma multi_compile_instancing
-            #pragma multi_compile _ DOTS_INSTANCING_ON
+            //#pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "UnlitInput.hlsl"
 
@@ -128,7 +128,7 @@ Shader "Universal Render Pipeline/Unlit"
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
-            #pragma multi_compile _ DOTS_INSTANCING_ON
+            //#pragma multi_compile _ DOTS_INSTANCING_ON
 
             #include "Packages/com.unity.render-pipelines.universal/Shaders/UnlitInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
@@ -156,7 +156,7 @@ Shader "Universal Render Pipeline/Unlit"
             ENDHLSL
         }
     }
-
+/*
     SubShader
     {
         Tags {"RenderType" = "Opaque" "IgnoreProjector" = "True" "RenderPipeline" = "UniversalPipeline" "ShaderModel"="2.0"}
@@ -172,7 +172,7 @@ Shader "Universal Render Pipeline/Unlit"
             HLSLPROGRAM
             #pragma only_renderers gles gles3 glcore
             #pragma target 2.0
-            
+
             #pragma vertex vert
             #pragma fragment frag
             #pragma shader_feature_local_fragment _ALPHATEST_ON
@@ -253,11 +253,11 @@ Shader "Universal Render Pipeline/Unlit"
 
             #pragma vertex DepthOnlyVertex
             #pragma fragment DepthOnlyFragment
-            
+
             // -------------------------------------
             // Material Keywords
             #pragma shader_feature_local_fragment _ALPHATEST_ON
-                        
+
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
@@ -287,6 +287,7 @@ Shader "Universal Render Pipeline/Unlit"
             ENDHLSL
         }
     }
+    */
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
     CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.UnlitShader"
 }
