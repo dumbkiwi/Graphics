@@ -50,6 +50,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 base.OnValidate();
 
             UpdateRenderingLayerNames();
+            m_RenderPipelineSettings.msaaSampleCount = m_RenderPipelineSettings.msaaSampleCount.Validate();
 
             isInOnValidateCall = false;
         }
