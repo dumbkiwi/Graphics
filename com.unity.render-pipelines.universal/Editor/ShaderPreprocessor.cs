@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -51,6 +50,14 @@ namespace UnityEditor.Rendering.Universal
         int m_TotalVariantsInputCount;
         int m_TotalVariantsOutputCount;
 
+        List<string> m_HybridCompatibleShaders = new List<string>()
+        {
+            "Universal Render Pipeline/Lit",
+            "Universal Render Pipeline/Simple Lit",
+            "Universal Render Pipeline/Unlit",
+            "Universal Render Pipeline/Baked Lit",
+        };
+
         // Multiple callback may be implemented.
         // The first one executed is the one where callbackOrder is returning the smallest number.
         public int callbackOrder { get { return 0; } }
@@ -58,6 +65,30 @@ namespace UnityEditor.Rendering.Universal
         bool IsFeatureEnabled(ShaderFeatures featureMask, ShaderFeatures feature)
         {
             return (featureMask & feature) != 0;
+        }
+
+        bool StripUnusedShaders(Shader shader, ShaderCompilerData compilerData)
+        {
+            ShaderCompilerPlatform scp = compilerData.shaderCompilerPlatform;
+            if (scp == ShaderCompilerPlatform.GLES3x && m_HybridCompatibleShaders.Contains(shader.name))
+            {
+                bool openGLRequireESHigherThan30 = PlayerSettings.openGLRequireES31
+                                                   || PlayerSettings.openGLRequireES32
+                                                   || PlayerSettings.openGLRequireES31AEP;
+
+                // Strip the SM 2.0 subshaders for GLES 3 when the
+                // ES require settings are set to 3.1 and above
+                if (openGLRequireESHigherThan30)
+                {
+                    bool supportsCompute = (compilerData.shaderRequirements & ShaderRequirements.Compute) != 0;
+                    if (!supportsCompute)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         bool StripUnusedPass(ShaderFeatures features, ShaderSnippetData snippetData)
@@ -156,6 +187,9 @@ namespace UnityEditor.Rendering.Universal
 
         bool StripUnused(ShaderFeatures features, Shader shader, ShaderSnippetData snippetData, ShaderCompilerData compilerData)
         {
+            if (StripUnusedShaders(shader, compilerData))
+                return true;
+
             if (StripUnusedFeatures(features, shader, snippetData, compilerData))
                 return true;
 
@@ -219,7 +253,6 @@ namespace UnityEditor.Rendering.Universal
             var inputShaderVariantCount = compilerDataList.Count;
             for (int i = 0; i < inputShaderVariantCount;)
             {
-
                 bool removeInput = StripUnused(ShaderBuildPreprocessor.supportedFeatures, shader, snippetData, compilerDataList[i]);
                 if (removeInput)
                     compilerDataList[i] = compilerDataList[--inputShaderVariantCount];
