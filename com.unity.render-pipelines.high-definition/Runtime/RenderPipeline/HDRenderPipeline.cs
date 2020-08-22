@@ -1384,15 +1384,23 @@ namespace UnityEngine.Rendering.HighDefinition
 
             bool MSAAEnabled = hdCamera.frameSettings.IsEnabled(FrameSettingsField.MSAA);
 
-            // The following features require a copy of the stencil, if none are active, no need to do the resolve.
-            bool resolveIsNecessary = GetFeatureVariantsEnabled(hdCamera.frameSettings);
-            resolveIsNecessary = resolveIsNecessary || hdCamera.IsSSREnabled()
-                                                    || hdCamera.IsSSREnabled(transparent: true);
-            // We need the resolve only with msaa
-            parameters.resolveIsNecessary = resolveIsNecessary && MSAAEnabled;
+            // The following features require a copy of the stencil
+            bool needCoarseStencilBuffer = hdCamera.IsSSREnabled()
+                                           || hdCamera.IsSSREnabled(transparent: true)
+                                           || hdCamera.frameSettings.IsEnabled(FrameSettingsField.SubsurfaceScattering);
 
-            int kernel = SampleCountToPassIndex(MSAAEnabled ? hdCamera.msaaSamples : MSAASamples.None);
-            parameters.resolveKernel = parameters.resolveIsNecessary ? kernel + 3 : kernel; // We have a different variant if we need to resolve to non-MSAA stencil
+            if (!needCoarseStencilBuffer && MSAAEnabled)
+                 needCoarseStencilBuffer = GetFeatureVariantsEnabled(hdCamera.frameSettings);
+
+            // we only dispatch texture resolve if needCoarseStencilBuffer is also true
+            parameters.resolveIsNecessary = MSAAEnabled;
+
+            parameters.resolveKernel = -1;
+            if (needCoarseStencilBuffer)
+            {
+                int kernel = SampleCountToPassIndex(MSAAEnabled ? hdCamera.msaaSamples : MSAASamples.None);
+                parameters.resolveKernel = MSAAEnabled ? kernel + 3 : kernel; // We have a different variant if we need to resolve to non-MSAA stencil
+            }
 
             return parameters;
         }
@@ -1411,6 +1419,9 @@ namespace UnityEngine.Rendering.HighDefinition
         {
             using (new ProfilingScope(cmd, ProfilingSampler.Get(HDProfileId.CoarseStencilGeneration)))
             {
+                if (parameters.resolveKernel < 0)
+                    return;
+
                 ComputeShader cs = parameters.resolveStencilCS;
                 cmd.SetComputeBufferParam(cs, parameters.resolveKernel, HDShaderIDs._CoarseStencilBuffer, coarseStencilBuffer);
                 cmd.SetComputeTextureParam(cs, parameters.resolveKernel, HDShaderIDs._StencilTexture, depthStencilBuffer, 0, RenderTextureSubElement.Stencil);
