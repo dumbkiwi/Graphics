@@ -30,6 +30,9 @@ editor_versions:
     ios:
       revision: cf5c4788e1d8
       version: 2020.1.3f1
+    linux:
+      revision: cf5c4788e1d8
+      version: 2020.1.3f1
     macos:
       revision: cf5c4788e1d8
       version: 2020.1.3f1
@@ -38,17 +41,17 @@ editor_versions:
       version: 2020.1.3f1
   2020.1_staging:
     android:
-      revision: fa717bb873ec27c2e78fdcb24f4f23982762047b
+      revision: 28ba94a9b7ac2b18c7eb97ade98eb206d56347c9
       version: ''
     ios:
-      revision: fa717bb873ec27c2e78fdcb24f4f23982762047b
+      revision: 28ba94a9b7ac2b18c7eb97ade98eb206d56347c9
       version: ''
     linux:
-      revision: fa717bb873ec27c2e78fdcb24f4f23982762047b
+      revision: 28ba94a9b7ac2b18c7eb97ade98eb206d56347c9
       version: ''
     macos:
-      revision: fa717bb873ec27c2e78fdcb24f4f23982762047b
+      revision: 28ba94a9b7ac2b18c7eb97ade98eb206d56347c9
       version: ''
     windows:
-      revision: fa717bb873ec27c2e78fdcb24f4f23982762047b
+      revision: 28ba94a9b7ac2b18c7eb97ade98eb206d56347c9
       version: ''
